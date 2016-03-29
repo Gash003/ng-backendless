@@ -1,5 +1,5 @@
+bower_components
 temp
-app/bower_components
 logs/*
 !.gitkeep
 node_modules/

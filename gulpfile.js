@@ -10,7 +10,7 @@ var $ = require('gulp-load-plugins')({
 
 gulp.task('vet', function () {
   return gulp
-    .src(config.appJs)
+    .src(config.allJs)
     .pipe($.jscs())
     .pipe($.jshint())
     .pipe($.jscsStylish.combineWithHintResults())
@@ -33,6 +33,29 @@ gulp.task('clean-styles', function (done) {
 
 gulp.task('less-watcher', function () {
   gulp.watch([config.less], ['styles']);
+});
+
+
+gulp.task('wiredep', function() {
+  var wiredep = require('wiredep').stream;
+  var options = config.getWiredepDefaultOptions();
+
+  return gulp
+    .src(config.index)
+    .pipe(wiredep(options))
+    .pipe($.inject(gulp.src(config.appJs)))
+    .pipe(gulp.dest(config.client));
+});
+
+gulp.task('inject', ['wiredep', 'styles'], function() {
+  var wiredep = require('wiredep').stream;
+  var options = config.getWiredepDefaultOptions();
+
+  return gulp
+    .src(config.index)
+    .pipe(wiredep(options))
+    .pipe($.inject(gulp.src(config.css)))
+    .pipe(gulp.dest(config.client));
 });
 
 //------

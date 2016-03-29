@@ -6,7 +6,9 @@
     <title>My AngularJS App</title>
     <meta name="description" content="Ng backend-less application">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="app.css">
+    <!-- inject:css -->
+    <link rel="stylesheet" href="/temp/styles.css">
+    <!-- endinject -->
 </head>
 <body>
 <ul class="menu">
@@ -19,10 +21,16 @@
 
 <div>Backend-less demo</div>
 
-<script src="bower_components/angular/angular.js"></script>
-<script src="bower_components/angular-route/angular-route.js"></script>
-<script src="app.js"></script>
-<script src="view1/view1.js"></script>
-<script src="view2/view2.js"></script>
+
+<!-- bower:js -->
+<script src="/bower_components/angular/angular.js"></script>
+<script src="/bower_components/angular-route/angular-route.js"></script>
+<!-- endbower -->
+
+<!-- inject:js -->
+<script src="/app/app.js"></script>
+<script src="/app/view1/view1.js"></script>
+<script src="/app/view2/view2.js"></script>
+<!-- endinject -->
 </body>
 </html>
