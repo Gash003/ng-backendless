@@ -58,7 +58,8 @@ gulp.task('clean-wiredep', function(done) {
 gulp.task('templates', ['clean-templates'], function() {
   return gulp
     .src(config.html, {base: config.client})
-    .pipe(gulp.dest(config.dist));
+    .pipe(gulp.dest(config.dist))
+    .pipe(browserSync.stream());
 });
 
 gulp.task('clean-templates', function(done) {
@@ -96,6 +97,7 @@ gulp.task('browsersync', function() {
   });
 
   gulp.watch([config.less], ['styles']);
+  gulp.watch([config.html], ['templates']);
 });
 
 gulp.task('build', ['wiredep', 'templates', 'babelify'], function() {
