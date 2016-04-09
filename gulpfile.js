@@ -70,15 +70,18 @@ gulp.task('clean-templates', function(done) {
   clean(files, done);
 });
 
-gulp.task('babelify', ['clean-babelify'], function() {
+gulp.task('babelify', function() {
   return gulp
     .src(config.appJs)
+    .pipe($.plumber())
+    .pipe($.cached('babelizing'))
     .pipe($.sourcemaps.init())
     .pipe($.babel({
       presets: ['es2015']
     }))
     .pipe($.sourcemaps.write('.'))
-    .pipe(gulp.dest(config.dist));
+    .pipe(gulp.dest(config.dist))
+    .pipe(browserSync.stream());
 });
 
 gulp.task('clean-babelify', function(done) {
@@ -87,20 +90,41 @@ gulp.task('clean-babelify', function(done) {
 });
 
 gulp.task('browsersync', function() {
-  browserSync.init({
-    server: {
-      baseDir: config.dist,
-      routes: {
-        "/bower_components": "bower_components"
-      }
-    }
-  });
+
+  startBrowserSync();
 
   gulp.watch([config.less], ['styles']);
   gulp.watch([config.html], ['templates']);
+  gulp.watch([config.appJs], ['babelify']);
+
 });
 
 gulp.task('build', ['wiredep', 'templates', 'babelify'], function() {
+  startBrowserSync();
+});
+
+function log(msg) {
+  if(typeof(msg) === 'object') {
+    for (var item in msg) {
+      if (msg.hasOwnProperty(item)) {
+        $.util.log($.util.colors.blue(msg[item]));
+      }
+    }
+  }
+  else {
+    $.util.log($.util.colors.blue(msg));
+  }
+}
+
+function clean(path, done) {
+  del(path).then(function () { done(); });
+}
+
+function startBrowserSync() {
+  if(browserSync.active) {
+    return;
+  }
+
   browserSync.init({
     server: {
       baseDir: config.dist,
@@ -109,8 +133,4 @@ gulp.task('build', ['wiredep', 'templates', 'babelify'], function() {
       }
     }
   });
-});
-
-function clean(path, done) {
-  del(path).then(function () { done(); });
 }
