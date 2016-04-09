@@ -2,10 +2,10 @@
 
 module.exports = function () {
   var client = './app/';
-  var temp = './temp/';
+  var dist = './dist/';
 
   var config = {
-    temp: temp,
+    dist: dist,
     client: client,
     bower: {
       bowerJson: './bower.json',
@@ -13,7 +13,7 @@ module.exports = function () {
       ignorePath: '..'
     },
     css: [
-      temp + 'styles.css'
+      dist + 'styles/*.css'
     ],
     allJs: [
       client + '**/*.js',
@@ -22,9 +22,13 @@ module.exports = function () {
     appJs: [
       client + '**/*.js'
     ],
+    html: [
+      client + '**/*.html', 
+      '!' + client + 'index.html'
+    ],
     index: client + 'index.html',
     less: [
-      client + 'styles/styles.less'
+      client + 'styles/*.less'
     ]
   };
 
