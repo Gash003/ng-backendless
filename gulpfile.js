@@ -24,7 +24,8 @@ gulp.task('styles', ['clean-styles'], function () {
     .pipe($.plumber())
     .pipe($.less())
     .pipe($.autoprefixer({ browsers: ['last 2 version', '> 5%'] }))
-    .pipe(gulp.dest('./dist'));
+    .pipe(gulp.dest('./dist'))
+    .pipe(browserSync.stream());
 });
 
 gulp.task('clean-styles', function (done) {
@@ -32,11 +33,7 @@ gulp.task('clean-styles', function (done) {
   clean(files, done);
 });
 
-gulp.task('less-watcher', function () {
-  gulp.watch([config.less], ['styles']);
-});
-
-gulp.task('wiredep', ['clean-wiredep'], function() {
+gulp.task('wiredep', ['clean-wiredep', 'styles'], function() {
   var wiredep = require('wiredep').stream;
   var options = config.getWiredepDefaultOptions();
 
@@ -97,12 +94,17 @@ gulp.task('browsersync', function() {
       }
     }
   });
+
+  gulp.watch([config.less], ['styles']);
 });
 
-gulp.task('build', ['styles', 'wiredep', 'babelify'], function() {
+gulp.task('build', ['wiredep', 'templates', 'babelify'], function() {
   browserSync.init({
     server: {
-      baseDir: ["bower_components", "dist"]
+      baseDir: config.dist,
+      routes: {
+        "/bower_components": "bower_components"
+      }
     }
   });
 });
