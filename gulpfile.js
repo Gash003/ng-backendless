@@ -24,7 +24,7 @@ gulp.task('styles', ['clean-styles'], function () {
     .pipe($.plumber())
     .pipe($.less())
     .pipe($.autoprefixer({ browsers: ['last 2 version', '> 5%'] }))
-    .pipe(gulp.dest('./dist'))
+    .pipe(gulp.dest(config.dist))
     .pipe(browserSync.stream());
 });
 
@@ -101,6 +101,10 @@ gulp.task('browsersync', function() {
 
 gulp.task('build', ['wiredep', 'templates', 'babelify'], function() {
   startBrowserSync();
+
+  gulp.watch([config.less], ['styles']);
+  gulp.watch([config.html], ['templates']);
+  gulp.watch([config.appJs], ['babelify']);
 });
 
 function log(msg) {
