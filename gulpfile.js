@@ -36,7 +36,7 @@ gulp.task('clean-styles', function (done) {
 gulp.task('wiredep', ['clean-wiredep', 'styles'], function() {
   var wiredep = require('wiredep').stream;
   var options = config.getWiredepDefaultOptions();
-
+ 
   return gulp
     .src(config.index)
     .pipe(wiredep(options))
