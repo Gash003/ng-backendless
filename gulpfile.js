@@ -46,6 +46,9 @@ gulp.task('wiredep', ['clean-wiredep', 'styles'], function() {
     .pipe($.inject(gulp.src(config.appJs, {
       read: false
     }), {ignorePath: 'app', addRootSlash: false}))
+    .pipe($.if(config.isMocked, $.inject(gulp.src(config.mock, {
+      read: false
+    }), {ignorePath: 'app', addRootSlash: false, name: 'mocks'})))
     .pipe($.inject(gulp.src(config.css, {
       read: false
     }), {ignorePath: 'dist', addRootSlash: false}))

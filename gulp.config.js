@@ -21,14 +21,15 @@ module.exports = function () {
     ],
     appJs: [
       client + '**/*.js',
-      '!' + client + '**/*mock.js'
+      '!' + client + 'mocks.js',
+      '!' + client + '**/*.mock.js'
     ],
     html: [
       client + '**/*.html', 
       '!' + client + 'index.html'
     ],
     index: client + 'index.html',
-    mock: client + 'mock.js',
+    mock: client + 'mocks.js',
     less: [
       client + 'styles/*.less'
     ]
