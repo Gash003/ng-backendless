@@ -1,5 +1,6 @@
 'use strict';
 var gulp = require('gulp');
+var args = require('yargs').argv;
 var del = require('del');
 var browserSync = require('browser-sync').create();
 var config = require('./gulp.config')();
@@ -8,6 +9,8 @@ var $ = require('gulp-load-plugins')({
   camelize: true,
   lazy: true
 });
+
+config.isMocked = args.mocked;
 
 gulp.task('vet', function () {
   return gulp
@@ -34,12 +37,12 @@ gulp.task('clean-styles', function (done) {
 });
 
 gulp.task('wiredep', ['clean-wiredep', 'styles'], function() {
-  var wiredep = require('wiredep').stream;
-  var options = config.getWiredepDefaultOptions();
- 
+  var bowerFiles = require('main-bower-files');
+  var options = config.getBowerDefaultOptions();
+
   return gulp
     .src(config.index)
-    .pipe(wiredep(options))
+    .pipe($.inject(gulp.src(bowerFiles(options), {read: false}), {name: 'bower'}))
     .pipe($.inject(gulp.src(config.appJs, {
       read: false
     }), {ignorePath: 'app', addRootSlash: false}))
@@ -85,7 +88,7 @@ gulp.task('babelify', function() {
 });
 
 gulp.task('clean-babelify', function(done) {
-  var files = config.dist + '**/*.js';
+  var files = ['!' + config.dist + 'mock.js', config.dist + '**/*.js'];
   clean(files, done);
 });
 

@@ -20,23 +20,27 @@ module.exports = function () {
       './*.js'
     ],
     appJs: [
-      client + '**/*.js'
+      client + '**/*.js',
+      '!' + client + '**/*mock.js'
     ],
     html: [
       client + '**/*.html', 
       '!' + client + 'index.html'
     ],
     index: client + 'index.html',
+    mock: client + 'mock.js',
     less: [
       client + 'styles/*.less'
     ]
   };
 
-  config.getWiredepDefaultOptions = function() {
+  config.getBowerDefaultOptions = function(isMocked) {
     var options = {
-      bowerJson: config.bower.json,
-      directory: config.bower.directory,
-      ignorePath: config.bower.ignorePath
+      paths: {
+        bowerDirectory: config.bower.directory,
+        bowerJson: config.bower.json
+      },
+      includeDev: config.isMocked
     };
 
     return options;
