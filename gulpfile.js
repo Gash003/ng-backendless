@@ -5,6 +5,13 @@ var del = require('del');
 var browserSync = require('browser-sync').create();
 var config = require('./gulp.config')();
 
+//Mocks part based on babelify
+var browserify = require('browserify');
+var watchify = require('watchify');
+var babelify = require('babelify');
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
+
 var $ = require('gulp-load-plugins')({
   camelize: true,
   lazy: true
@@ -22,6 +29,7 @@ gulp.task('vet', function () {
 });
 
 gulp.task('styles', ['clean-styles'], function () {
+
   return gulp
     .src(config.less, {base: config.client})
     .pipe($.plumber())
@@ -36,7 +44,47 @@ gulp.task('clean-styles', function (done) {
   clean(files, done);
 });
 
-gulp.task('wiredep', ['clean-wiredep', 'styles'], function() {
+gulp.task('build-mocks', ['clean-build-mocks'], function() {
+  //We don't build mocks
+  if(!config.isMocked) {
+    return;
+  }
+
+  var bundler = watchify(
+    browserify(config.mock, { debug: true }).transform(babelify, {presets: ['es2015']})
+  );
+
+  function rebundle() {
+    return bundler.bundle()
+      .on('error', function(err) { console.error(err); this.emit('end'); })
+      .pipe(source('mocks.js'))
+      .pipe(buffer())
+      .pipe($.sourcemaps.init({ loadMaps: true }))
+      .pipe($.sourcemaps.write('.'))
+      .pipe(gulp.dest(config.dist))
+      .pipe(browserSync.stream());
+  }
+
+  bundler.on('log', log);
+
+  bundler.on('update', function() {
+    log('-> babelify bundling...');
+    rebundle();
+  });
+
+  return rebundle();
+});
+
+gulp.task('clean-build-mocks', function(done) {
+  var files = [
+    config.dist + 'mocks.js',
+    config.dist + 'mocks.js.map'
+  ];
+  clean(files, done);
+});
+
+
+gulp.task('wiredep', ['clean-wiredep', 'styles', 'build-mocks'], function() {
   var bowerFiles = require('main-bower-files');
   var options = config.getBowerDefaultOptions();
 
@@ -46,9 +94,9 @@ gulp.task('wiredep', ['clean-wiredep', 'styles'], function() {
     .pipe($.inject(gulp.src(config.appJs, {
       read: false
     }), {ignorePath: 'app', addRootSlash: false}))
-    .pipe($.if(config.isMocked, $.inject(gulp.src(config.mock, {
+    .pipe($.if(config.isMocked, $.inject(gulp.src(config.dist + 'mocks.js', {
       read: false
-    }), {ignorePath: 'app', addRootSlash: false, name: 'mocks'})))
+    }), {ignorePath: 'dist', addRootSlash: false, name: 'mocks'})))
     .pipe($.inject(gulp.src(config.css, {
       read: false
     }), {ignorePath: 'dist', addRootSlash: false}))

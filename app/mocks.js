@@ -1,5 +1,5 @@
 (function () {
-  console.info("Mocks started");
+  console.info("Mocks started!");
 
   var users = [{name: 'John', lastName: 'Doe'}, {name: 'Kate', lastName: 'Smith'}];
 
@@ -122,7 +122,7 @@
   }
 
   function requestMocksConfig($httpBackend) {
-    $httpBackend.whenGET('users').respond(200, users, 1000);
+    $httpBackend.whenGET('users').respond(200, users, 2000);
   }
 
   angular.module('myApp')

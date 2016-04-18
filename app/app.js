@@ -9,6 +9,7 @@ angular.module('myApp', [
 config(['$routeProvider', function($routeProvider) {
   $routeProvider.otherwise({redirectTo: '/view1'});
 
-  const test = 123;
+  let test = 123;
+
 
 }]);
