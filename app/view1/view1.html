@@ -1,9 +1,16 @@
 <hr>
-<p>This is the partial for view 1.</p>
+<p>
+    <div>Partial view 1. Data is fetched via $http service.</div>
+    <div>When mocked - 2s delay is emulated</div>
+</p>
 
-
-<pre>
-    {{users| json}}
-</pre>
+<div class="loading-container">
+    <div ng-show="isLoading">
+        Async data loading...
+    </div>
+    <pre ng-show="!isLoading">
+        {{users| json}}
+    </pre>
+</div>
 
 <hr>

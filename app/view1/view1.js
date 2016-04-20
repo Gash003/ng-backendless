@@ -11,10 +11,13 @@ angular.module('myApp.view1', ['ngRoute'])
 
 .controller('View1Ctrl', ['$scope', '$http', function($scope, $http) {
 
+  $scope.isLoading = true;
+  
   $scope.users = [];
 
   $http.get('users').then(({data}) => {
     angular.copy(data, $scope.users);
+    $scope.isLoading = false;
   });
-
+  
 }]);
