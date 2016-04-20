@@ -12,7 +12,8 @@ angular.module('myApp.view2', ['ngRoute'])
 .controller('View2Ctrl', function($http, $scope) {
   $scope.stock = [];
 
-  $http.get('stock').then(({data}) => {
-    angular.copy(data, $scope.stock);
-  });
+  $http.get('stock').then(
+    ({data}) => angular.copy(data, $scope.stock),
+    () => $scope.stock = "Error while loading stock"
+  );
 });

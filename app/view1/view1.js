@@ -15,9 +15,9 @@ angular.module('myApp.view1', ['ngRoute'])
   
   $scope.users = [];
 
-  $http.get('users').then(({data}) => {
-    angular.copy(data, $scope.users);
-    $scope.isLoading = false;
-  });
+  $http.get('users').then(
+    ({data}) => angular.copy(data, $scope.users),
+    () => $scope.users = 'Error while loading users'
+  ).finally(() => $scope.isLoading = false);
   
 }]);
