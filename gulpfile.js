@@ -104,7 +104,7 @@ gulp.task('wiredep', ['clean-wiredep', 'styles', 'build-mocks'], function() {
 });
 
 gulp.task('clean-wiredep', function(done) {
-  var files = config.dist + 'index.html';
+  var files = [config.dist + 'index.html'];
   clean(files, done);
 });
 
@@ -124,22 +124,19 @@ gulp.task('clean-templates', function(done) {
   clean(files, done);
 });
 
-gulp.task('babelify', function() {
-  return gulp
-    .src(config.appJs)
-    .pipe($.plumber())
-    .pipe($.cached('babelizing'))
-    .pipe($.sourcemaps.init())
-    .pipe($.babel({
-      presets: ['es2015']
-    }))
-    .pipe($.sourcemaps.write('.'))
-    .pipe(gulp.dest(config.dist))
-    .pipe(browserSync.stream());
+
+
+gulp.task('babelify', ['clean-babelify'], function() {
+  return runBabelify();
 });
 
 gulp.task('clean-babelify', function(done) {
-  var files = ['!' + config.dist + 'mock.js', config.dist + '**/*.js'];
+  var files = [
+    config.dist + '**/*.js',
+    config.dist + '**/*.js.map',
+    '!' + config.dist + 'mocks.js',
+    '!' + config.dist + 'mocks.js.map'
+  ];
   clean(files, done);
 });
 
@@ -158,7 +155,9 @@ gulp.task('build', ['wiredep', 'templates', 'babelify'], function() {
 
   gulp.watch([config.less], ['styles']);
   gulp.watch([config.html], ['templates']);
-  gulp.watch([config.appJs], ['babelify']);
+  gulp.watch([config.appJs], function() {
+    runBabelify();
+  });
 });
 
 function log(msg) {
@@ -191,4 +190,18 @@ function startBrowserSync() {
       }
     }
   });
+}
+
+function runBabelify() {
+  return gulp
+    .src(config.appJs)
+    .pipe($.plumber())
+    .pipe($.cached('babelizing'))
+    .pipe($.sourcemaps.init())
+    .pipe($.babel({
+      presets: ['es2015']
+    }))
+    .pipe($.sourcemaps.write('.'))
+    .pipe(gulp.dest(config.dist))
+    .pipe(browserSync.stream());
 }

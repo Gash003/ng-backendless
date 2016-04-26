@@ -22,7 +22,7 @@ module.exports = function () {
     appJs: [
       client + '**/*.js',
       '!' + client + 'mocks.js',
-      '!' + client + '**/*.mock.js'
+      '!' + client + '**/mocks.js'
     ],
     html: [
       client + '**/*.html', 

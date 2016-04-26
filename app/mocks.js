@@ -3,8 +3,6 @@ import stockMock from './view2/mocks';
 
 console.info("Mocks started!");
 
-var users = [{name: 'John', lastName: 'Doe'}, {name: 'Kate', lastName: 'Smith'}];
-
 function configMocks($provide) {
   $provide.decorator('$httpBackend', angular.mock.e2e.$httpBackendDecorator);
 }
